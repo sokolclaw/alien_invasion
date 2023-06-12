@@ -32,8 +32,8 @@ class AlienInvasion:
             self._check_events()
             self.ship.moving()
             self._update_bullets()
+            self._update_aliens()
             self._update_screen()
-
             
     def _check_events(self):
         '''Обрабатывает нажатия клавиш и события мыши'''
@@ -55,7 +55,6 @@ class AlienInvasion:
             sys.exit()
         if event.key == pygame.K_SPACE:
             self._fire_bullet()
-        
 
     def _check_keyup_events(self, event):
         '''Реагирует на отпускание клавиш'''
@@ -77,6 +76,11 @@ class AlienInvasion:
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
+    def _update_aliens(self):
+        '''обновляет пришельцев во флоте'''
+        self._check_fleet_edges()
+        self.aliens.update()
+
     def _create_fleet(self):
         '''создание флот пришельцев'''
         alien = Alien(self)
@@ -94,7 +98,6 @@ class AlienInvasion:
             [self._create_alien(alien_number, row_number) 
                 for alien_number in range(number_aliens_x)]
                 
-
     def _create_alien(self, alien_number, row_number):
         alien = Alien(self)
         alien_width, alien_height = alien.rect.size
@@ -102,6 +105,19 @@ class AlienInvasion:
         alien.rect.x = alien.x
         alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
         self.aliens.add(alien)
+
+    def _check_fleet_edges(self):
+        '''Реагирует на достижение пришельцем конца экрана'''
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+    
+    def _change_fleet_direction(self):
+        '''Опускает флот и меняет направление'''
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
 
     def _update_screen(self):
         '''Обновляет изображения на экране и отображает новый экран'''
@@ -111,9 +127,7 @@ class AlienInvasion:
         self.aliens.draw(self.screen)
         self.ship.blitme()
 
-        
         pygame.display.flip()
-
 
 if __name__ == '__main__':
     ai = AlienInvasion()
