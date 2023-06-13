@@ -8,7 +8,6 @@ from settings import Settings
 from ship import Ship
 
 
-
 class AlienInvasion:
 
     def __init__(self):
@@ -70,19 +69,32 @@ class AlienInvasion:
             self.bullets.add(new_bullet)
 
     def _update_bullets(self):
+        '''Обновляет позиции снарядов и удаляет старые пули'''
         self.bullets.update()
 
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
+        '''Проверка попаданий в пришельцев'''
+        collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+
+        if self.aliens:
+            continue
+        self.bullets.empty()
+        self._create_fleet()
+
+
     def _update_aliens(self):
-        '''обновляет пришельцев во флоте'''
+        '''
+        Проверяет, достиг ли флот края экрана 
+        и обновляет пришельцев во флоте
+        '''
         self._check_fleet_edges()
         self.aliens.update()
 
     def _create_fleet(self):
-        '''создание флот пришельцев'''
+        '''создание флота пришельцев'''
         alien = Alien(self)
         alien_width, alien_height = alien.rect.size
         available_space_x = self.settings.screen_width - (2 * alien_width)
