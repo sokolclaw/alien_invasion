@@ -6,7 +6,6 @@ class GameStats():
 
         self.settings = ai_game.settings
         self.reset_stats()
-        self.prep_level()
 
         self.high_score = 0
 

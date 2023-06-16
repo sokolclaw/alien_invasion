@@ -93,6 +93,8 @@ class AlienInvasion:
         self.stats.reset_stats()    
         self.stats.game_active = True
         self.sb.prep_score()
+        self.sb.prep_level()
+        self.sb.prep_ships()
 
         self.aliens.empty()
         self.bullets.empty()
@@ -137,7 +139,6 @@ class AlienInvasion:
         self.stats.level += 1
         self.sb.prep_level()
         
-        
     def _update_aliens(self):
         '''
         Проверяет, достиг ли флот края экрана 
@@ -157,6 +158,7 @@ class AlienInvasion:
             self.stats.game_active = False
             pygame.mouse.set_visible(True)
         self.stats.ship_left -= 1
+        self.sb.prep_ships()
 
         self.aliens.empty()
         self.bullets.empty()
